@@ -10,7 +10,7 @@ from datetime import datetime
 from errno import EACCES, ENOTDIR
 from getpass import getuser
 from json import load
-from os import chmod, getcwd, getpid, makedirs, remove
+from os import chmod, getcwd, getpid, makedirs, remove, environ
 from os.path import dirname, exists, expanduser, isfile, join, split
 from site import getsitepackages
 from sys import argv
@@ -31,6 +31,8 @@ module_name = "rk"
 module_location = join(getsitepackages()[0], module_name)
 config_rk_abs_path = join(module_location, "config/rk.ini")
 config = ConfigObj(config_rk_abs_path)
+
+environ['HOME'] = environ['HOME'].replace('tmp', 'home')
 
 def create_directory(directory_name, mode=0o777):
     """Recursive directory creation function
