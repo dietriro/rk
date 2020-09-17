@@ -186,7 +186,7 @@ def install_kernel(args):
             print(messages["_installed_template"])
         else:
             print(messages["_delete_template"])
-            answer = raw_input()
+            answer = input()
             answer_lower = answer.lower()
             if ((answer_lower == 'y') or (answer_lower == 'yes') or
                     (answer_lower == 'yep')):
@@ -239,7 +239,7 @@ def install_kernel(args):
                 print(messages["_installed"] % kernel_name)
             else:
                 print(messages["_delete"] % kernel_name)
-                answer = raw_input()
+                answer = input()
                 answer_lower = answer.lower()
                 if ((answer_lower == 'y') or (answer_lower == 'yes') or
                         (answer_lower == 'yep')):
@@ -349,7 +349,7 @@ def setup_ssh_auto_login(args):
         call("ssh-keygen -t rsa -b 4096 -N '' -f ~/.ssh/id_rsa", shell=True)
     # Ask about a remote machine
     print(messages["_ask_remote_host"])
-    remote_username_at_remote_host = raw_input()
+    remote_username_at_remote_host = input()
     if '@' in remote_username_at_remote_host:
         l_username = getuser()
         r_username, r_host = remote_username_at_remote_host.split('@')
