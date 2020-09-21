@@ -10,22 +10,26 @@ from datetime import datetime
 from errno import EACCES, ENOTDIR
 from getpass import getuser
 from json import load
-from os import chmod, getcwd, getpid, makedirs, remove, environ
+from os import chmod, getcwd, getpid, makedirs, remove, environ, system
 from os.path import dirname, exists, expanduser, isfile, join, split
 from site import getsitepackages
 from sys import argv
+from time import sleep
 
 from configobj import ConfigObj
 from execnet import makegateway
 from paramiko.util import log_to_file
+from wakeonlan import send_magic_packet
 
 from rk.ssh import paramiko_tunnel
 
-arguments_number = 3 # interpreter, local_connection_file,
+arguments_number = 4 # interpreter, local_connection_file,
                      # remote_username_at_remote_host
 messages = {} # Strings for output
 week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday',
         'Sunday']
+remote_host_wakeup_time = 60
+remote_host_wakeup_interval = 2
 
 module_name = "rk"
 module_location = join(getsitepackages()[0], module_name)
@@ -118,6 +122,7 @@ if argv_len == arguments_number:
     remote_username_at_remote_host = argv[3] # Just a remote host or,
             # if your username is different on a remote machine,
             # use this syntax: remote username AT remote host.
+    remote_mac_address = argv[4]
 else:
     print(messages["_error_ArgumentsNumber"] % (arguments_number, argv_len))
     exit(1)
@@ -142,6 +147,20 @@ with open(local_connection_file, 'r') as f:
     cfg = load(f)
 # GET a current working directory of a process
 cwd = getcwd()
+# Check if remote machine is online
+host_up  = True if system("ping -c 1 " + remote_host) is 0 else False
+num_tries = 0
+if not host_up and remote_mac_address:
+    print('Remote host at {} down. Sending magic package to {} to wake it up.'.format(remote_host, remote_mac_address))
+    send_magic_packet(remote_mac_address)
+    while system("ping -c 1 " + remote_host) is not 0 and num_tries*remote_host_wakeup_interval < remote_host_wakeup_time:
+        print('Remote host at {} still down. Waiting for it to wake up...'.format(remote_host))
+        num_tries += 1
+        sleep(remote_host_wakeup_interval)
+    if system("ping -c 1 " + remote_host) is 0:
+        print('Successfully started remote host at {}.'.format(remote_host))
+    else:
+        print('Remote host at {} did not start within the defined waiting time of {} seconds'.format(remote_host, remote_host_wakeup_time))
 # Launch a kernel process on a remote machine
 gw = makegateway("ssh=%s//python=%s" % (remote_username_at_remote_host,
                                         interpreter))

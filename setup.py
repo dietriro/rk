@@ -32,7 +32,8 @@ setup(
     install_requires = [
         "configobj",
         "execnet",
-        "paramiko"
+        "paramiko",
+        "wakeonlan"
     ],
     keywords = ["ipython", "jupyter", "remote kernel", "rk", "python2"],
     license = "Public Domain",
