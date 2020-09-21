@@ -7,3 +7,4 @@
 .pypirc
 /*.egg-info/*
 /dist/*
+.idea

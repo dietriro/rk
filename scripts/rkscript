@@ -162,8 +162,8 @@ if not host_up and remote_mac_address:
     else:
         print('Remote host at {} did not start within the defined waiting time of {} seconds'.format(remote_host, remote_host_wakeup_time))
 # Launch a kernel process on a remote machine
-gw = makegateway("ssh=%s//python=%s" % (remote_username_at_remote_host,
-                                        interpreter))
+gw = makegateway("ssh=%s//python=%s//env:USER=%s" % (remote_username_at_remote_host,
+                                                     interpreter, local_username))
 ch = gw.remote_exec("""
     import socket
     from json import dumps
