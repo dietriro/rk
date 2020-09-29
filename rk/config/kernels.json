@@ -4,6 +4,7 @@
   "interpreter": "python",
   "language": "python",
   "remote_host": "remote_username@remote_host",
+  "remote_ssh_port": "22",
   "remote_host_mac_address": "ff.ff.ff.ff.ff.ff"
  }
 }

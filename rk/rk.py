@@ -123,8 +123,8 @@ def install_kernel(args):
                 exit(1)
 
     def create_kernel_json_file(display_name, language, script, interpreter,
-                                connection_file, remote_host, remote_host_mac_address,
-                                destination):
+                                connection_file, remote_host, remote_ssh_port,
+                                remote_host_mac_address, destination):
         """Create kernel.json file"""
 
         kernel_dict = {"argv": [], "display_name": display_name,
@@ -133,6 +133,7 @@ def install_kernel(args):
         kernel_dict["argv"].append(interpreter)
         kernel_dict["argv"].append(connection_file)
         kernel_dict["argv"].append(remote_host)
+        kernel_dict["argv"].append(remote_ssh_port)
         kernel_dict["argv"].append(remote_host_mac_address)
         try:
             with open(join(destination, "kernel.json"), 'w') as f:
@@ -164,6 +165,7 @@ def install_kernel(args):
         language = config["language"]
         interpreter = config["interpreter"]
         remote_host = config["remote_host"]
+        remote_ssh_port = config["remote_ssh_port"]
         remote_host_mac_address = config["remote_host_mac_address"]
         kernel_abs_path = join(kernels_location, kernel_name)
         if exists(kernel_abs_path) and isfile(kernel_abs_path):
@@ -185,8 +187,8 @@ def install_kernel(args):
             # Create kernel.json
             create_kernel_json_file(display_name, language, script,
                                     interpreter, connection_file,
-                                    remote_host, remote_host_mac_address, 
-                                    kernel_abs_path)
+                                    remote_host, remote_ssh_port,
+                                    remote_host_mac_address, kernel_abs_path)
             print(messages["_installed_template"])
         else:
             print(messages["_delete_template"])
@@ -219,6 +221,7 @@ def install_kernel(args):
             language = kernels_dict[kernel_name]["language"]
             interpreter = kernels_dict[kernel_name]["interpreter"]
             remote_host = kernels_dict[kernel_name]["remote_host"]
+            remote_ssh_port = kernels_dict[kernel_name]["remote_ssh_port"]
             remote_host_mac_address = kernels_dict[kernel_name]["remote_host_mac_address"]
             kernel_abs_path = join(kernels_location, kernel_name)
             if exists(kernel_abs_path) and isfile(kernel_abs_path):
@@ -240,8 +243,8 @@ def install_kernel(args):
                 # Create kernel.json
                 create_kernel_json_file(display_name, language, script,
                                         interpreter, connection_file,
-                                        remote_host, remote_host_mac_address,
-                                        kernel_abs_path)
+                                        remote_host, remote_ssh_port,
+                                        remote_host_mac_address, kernel_abs_path)
                 print(messages["_installed"] % kernel_name)
             else:
                 print(messages["_delete"] % kernel_name)
